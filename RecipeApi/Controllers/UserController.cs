@@ -17,12 +17,14 @@ namespace RecipeApi.Controllers
     public class UserController : Controller
     {
         private IUserRepository _userRepository;
+        private IPostRepository _postRepository;
 
         // GET: api/<controller>
 
-        public UserController(IUserRepository userRepository)
+        public UserController(IUserRepository userRepository, IPostRepository postRepository)
         {
             _userRepository = userRepository;
+            _postRepository = postRepository;
         }
 
 
@@ -38,7 +40,13 @@ namespace RecipeApi.Controllers
 
         
     }
-
+        [HttpGet("{id}")]
+        public IEnumerable<Post> GetPosts(int id)
+        {
+           return _postRepository.GetAll().Where(l => l.EigenaarId == id);
+          
+        }
      
+
     }
 }

@@ -30,26 +30,46 @@ namespace RecipeApi.Controllers
         /// <returns>array of recipes</returns>
 
         [HttpGet]
-        public IEnumerable<Post> GetRecipes()
+        public IEnumerable<Post> GetPosts()
         {
             return _postRepository.GetAll().OrderBy(r => r.Datum);
         }
 
-       // GET: api/Recipes/5
+        [HttpGet("userposts/{email}")]
+        public IEnumerable<Post> GetPostsFromUser(string email)
+        {
+            User u = _customerRepository.GetBy(email);
+            return _postRepository.GetAll().Where(l => l.EigenaarId == 2);
+
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult<Post> DeleteRecipe(int id)
+        {
+            Post post = _postRepository.GetBy(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+            _postRepository.Delete(post);
+            _postRepository.SaveChanges();
+            return post;
+        }
+        // GET: api/Recipes/5
         /// <summary>
         /// Get the recipe with given id
         /// </summary>
         /// <param name="id">the id of the recipe</param>
         /// <returns>The recipe</returns>
-        [HttpGet("{id}")]
-        public ActionResult<Post> GetPost(int id)
-        {
-            Post post = _postRepository.GetBy(id);
-            if (post == null) return NotFound();
-            return post;
-        }
+        /*   [HttpGet("{id}")]
+           public ActionResult<Post> GetPost(int id)
+           {
+               Post post = _postRepository.GetBy(id);
+               if (post == null) return NotFound();
+               return post;
+           }*/
 
-       // POST: api/Recipes
+        // POST: api/Recipes
         /// <summary>
         /// Adds a new recipe
         /// </summary>
@@ -64,7 +84,7 @@ namespace RecipeApi.Controllers
             _postRepository.Add(postToCreate);
             _postRepository.SaveChanges();
 
-            return CreatedAtAction(nameof(GetPost), new { id = postToCreate.Id }, postToCreate);
+            return CreatedAtAction(nameof(GetPosts), new { id = postToCreate.Id }, postToCreate);
         }
 
       // PUT: api/Recipes/5
